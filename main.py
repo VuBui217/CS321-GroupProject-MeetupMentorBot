@@ -1,6 +1,7 @@
 import discord
+import config
 
-TOKEN = 'MTE1MDIxMjg4MzM4OTYxMjI0NA.GpxOk2.Ghyw7GqLoVLU9pP3oxMwnOeMYmxltHlO-7MQuE'
+TOKEN = config.bot_token
 client = discord.Client(intents=discord.Intents.default())
 
 @client.event
