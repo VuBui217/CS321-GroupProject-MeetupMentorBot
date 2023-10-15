@@ -42,8 +42,5 @@ async def remove_my_event(ctx):
     print(f'Place Holder to remove event on your schedule')
 
 
-async def main():
-    async with client:
-        await load()
-        await client.run(TOKEN)
+client.run(TOKEN)
 
