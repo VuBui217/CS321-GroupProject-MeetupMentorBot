@@ -10,8 +10,8 @@ class Member:
         self.name = name
         self.groups = []
         
-    def addGroup(self, Group ) :
-        self.members.append(Group())
+    def addGroup(self, group:Group ) :
+        self.groups.append(Group())
         return self
         
 class Event:
