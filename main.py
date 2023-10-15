@@ -2,6 +2,10 @@ import discord
 import config
 from discord.ext import commands
 import os
+import events
+import groups
+import members
+
 
 TOKEN = config.bot_token
 client = commands.Bot(command_prefix ="!", intents=discord.Intents.all())
