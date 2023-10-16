@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 '''
 This class represents an "Event" object. An "Event" is defined as a scheduled, 
 finite block of time, dedicated to a specific purpose. 
-@authors: Nabil Cofie-Collison, Aymaan Bokth
+
 '''
 class Event:
     

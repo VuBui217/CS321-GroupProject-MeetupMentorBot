@@ -7,6 +7,11 @@ import events
 import groups
 import members
 
+'''
+This is the main Class that implements the classes groups, members, and events
+This class also functions as a GUI for the program
+
+'''
 
 TOKEN = config.bot_token
 client = commands.Bot(command_prefix="!", intents=discord.Intents.all())
@@ -16,14 +21,18 @@ all_groups = []
 client.synced = False
 client.added = False
 
+"""
+    Discord Event On_Ready Group with the group name, group member names and the events.
+    @param name The name of the group.
+    """
 @client.event
 async def on_ready():
     await client.wait_until_ready()
     if not client.synced:
-        await client.tree.sync(guild = discord.Object(id =1143632695503638528))
+        await client.tree.sync(guild=discord.Object(id=1143632695503638528))
         client.synced = True
     if not client.added:
-      client.added = True   
+        client.added = True
     print(f'{client.user} has connected to Discord!')
 
 
@@ -91,11 +100,11 @@ async def my_groups(interaction: discord.Interaction):
         if people.name == user:
             mem = people
             break
-        
+
     if mem is None:
-        await  interaction.response.send_message(f'"{user}" not initialized')
+        await interaction.response.send_message(f'"{user}" not initialized')
         return
-    
+
     groups = [group.name for group in mem.groups]
     group_info = '\n'.join([f'Group Name: {group}' for group in groups])
     await interaction.response.send_message(f'You are a part of the following groups:\n{group_info}')
@@ -109,13 +118,13 @@ async def my_schedule(interaction: discord.Interaction):
         if people.name == user:
             mem = people
             break
-        
+
     if mem is None:
-        await  interaction.response.send_message(f'"{user}" not initialized')
+        await interaction.response.send_message(f'"{user}" not initialized')
         return
-    
+
     schedule = []
-    
+
     for group in mem.groups:
         for event in group.events:
             schedule.append(event.get_event_info())
@@ -128,7 +137,7 @@ async def my_schedule(interaction: discord.Interaction):
 
 
 @client.tree.command(name="add_group_event", description="add event to group you are a part of")
-async def add_group_event(interaction: discord.Interaction,GroupName: str, event_name: str, year: int, month: int, day: int, start_hour: int, start_minute: int, duration_minutes: int):
+async def add_group_event(interaction: discord.Interaction, GroupName: str, event_name: str, year: int, month: int, day: int, start_hour: int, start_minute: int, duration_minutes: int):
     group = None
     for existing_group in all_groups:  # Replace with your list of groups
         if existing_group.name == GroupName:
@@ -139,14 +148,14 @@ async def add_group_event(interaction: discord.Interaction,GroupName: str, event
         await interaction.response.send_message(f'Group "{GroupName}" not found.')
         return
 
-    
     new_event = events.Event(event_name, group)
-    new_event.createEvent(year, month, day, start_hour, start_minute, duration_minutes)
+    new_event.createEvent(year, month, day, start_hour,
+                          start_minute, duration_minutes)
     group.addEvent(new_event)
 
 
 @client.tree.command(name="remove_group_event", description="remove event to group you are a part of")
-async def remove_group_event(interaction: discord.Interaction,GroupName: str, EventName: str):
+async def remove_group_event(interaction: discord.Interaction, GroupName: str, EventName: str):
     group = None
     for existing_group in all_groups:  # Replace with your list of groups
         if existing_group.name == GroupName:
@@ -156,7 +165,7 @@ async def remove_group_event(interaction: discord.Interaction,GroupName: str, Ev
     if group is None:
         await interaction.response.send_message(f'Group "{GroupName}" not found.')
         return
-    
+
     event_to_remove = None
     for event in group.events:
         if event.name == EventName:
@@ -167,7 +176,7 @@ async def remove_group_event(interaction: discord.Interaction,GroupName: str, Ev
         group.events.remove(event_to_remove)
         await interaction.response.send_message(f'Event "{EventName}" removed from group "{GroupName}".')
     else:
-        await interaction.response.send_message(f'Event "{EventName}" not found in group "{GroupName}".') 
+        await interaction.response.send_message(f'Event "{EventName}" not found in group "{GroupName}".')
 
 
 client.run(TOKEN)

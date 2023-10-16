@@ -5,7 +5,7 @@ from discord.ext import commands
 
 '''
 Class defining a "Member" which represents a user interacting with the MeetupMentor discord bot.
-@authors: Nabil Cofie-Collison, Samantha Amancio
+
 '''
 class Member:
     

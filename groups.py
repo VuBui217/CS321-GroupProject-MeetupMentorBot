@@ -6,7 +6,7 @@ import members
 
 """
 Class to represents a group in the discord bot. group of people that want to mange their time and tasks.
-@authors: Nabil Cofie-Collison, Hayder Atiyah
+
 """
 class Group:
     
