@@ -13,7 +13,7 @@ class Member:
     def addGroup(self, group):
         self.groups.append(group)
         group.addMember(self)
-        return self
+        
 
     def get_member_info(self):
         group_names = [group.name for group in self.groups]
