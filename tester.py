@@ -10,6 +10,8 @@ class initUnitTests(unittest.TestCase):
         self.assertEqual(result, "first last")
 
 class addMemberUnitTests(unittest.TestCase):
-
+    def test_add_member (self):
+        result = __init__(self, "Member 1");
+        self.assertEqual(result, "Member 1");
 
 class addEventUnitTests(unittest.TestCase):
