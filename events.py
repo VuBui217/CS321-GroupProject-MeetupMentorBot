@@ -23,7 +23,7 @@ class Event:
         self.end_time = None
 
     '''
-    Specifies when an Event is
+    Creates an Event and add it to the event listed in the group
     @param year Year of Event
     @param month Month of Event
     @param day Day of Event

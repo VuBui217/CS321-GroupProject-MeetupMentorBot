@@ -30,15 +30,16 @@ class Group:
     """
     Method to add new event to the group. 
     @param eventName The name of the event.
+    @param year The year of the event.
     @param month The month of the event.
     @param day The day of the event.
     @param startHour The starting hour of the event.
     @param startMin  The starting minute of the event.
     @param duration The duration of the event in minutes.
     """
-    def addEvent(self, eventName, month, day, startHour, startMin, duration):
+    def addEvent(self,year, eventName, month, day, startHour, startMin, duration):
         tempEvent = events.Event(eventName, self)
-        tempEvent.createEvent(month, day, startHour, startMin, duration)
+        tempEvent.createEvent(year,month, day, startHour, startMin, duration)
         self.events.append(tempEvent)
 
 
