@@ -27,7 +27,7 @@ class Member:
     def addGroup(self, group):
         self.groups.append(group)
         group.addMember(self)
-        return self
+        
     
     '''
     Returns a representation of the group(s) that self/member is a part of.
