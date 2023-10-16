@@ -47,3 +47,5 @@ class Event:
         else:
             return "Event information is incomplete."
         
+    
+        

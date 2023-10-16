@@ -21,3 +21,8 @@ class Group:
         tempEvent = events.Event(eventName, self)
         tempEvent.createEvent(month, day, startHour, startMin, duration)
         self.events.append(tempEvent)
+     
+        
+    def removeEvent(self, event):
+        if event in self.events:
+            self.events.remove(event)
