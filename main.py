@@ -9,7 +9,7 @@ import members
 
 '''
 This is the main Class that implements the classes groups, members, and events
-This class also functions as a GUI for the program
+This class also functions as a GUI for the program.
 
 '''
 
