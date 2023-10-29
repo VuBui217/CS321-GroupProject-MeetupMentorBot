@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import config
-import os
+import asyncio
 import events
 import groups
 import members
@@ -18,8 +18,6 @@ client = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 all_users = []
 all_groups = []
 
-client.synced = False
-client.added = False
 
 """
 Discord Event On_Ready Constructor to Initialize the Client.
@@ -29,12 +27,7 @@ Also initializes the tree commands for the program
 
 @client.event
 async def on_ready():
-    await client.wait_until_ready()
-    if not client.synced:
-        await client.tree.sync(guild=discord.Object(id=1143632695503638528))
-        client.synced = True
-    if not client.added:
-        client.added = True
+    await client.tree.sync()
     print(f'{client.user} has connected to Discord!')
 
 """
@@ -55,10 +48,10 @@ async def create_member(interaction: discord.Interaction):
 """
 This command creates a new group and adds the user as the first member.
 It checks if the user is initialized before creating the group.
-@param GroupName The Name of the Group
+@param group_name The Name of the Group
 """
-@client.tree.command(name="create_group", description="Create a group with the user a the only member ")
-async def create_group(interaction: discord.Interaction, GroupName: str):
+@client.tree.command(name="new_group", description="Create a group with the user a the only member ")
+async def new_group(interaction: discord.Interaction, group_name: str):
     user = interaction.user.name
     mem = None
     for people in all_users:
@@ -70,7 +63,7 @@ async def create_group(interaction: discord.Interaction, GroupName: str):
         await interaction.response.send_message(f'"{user}" not initialized')
         return
 
-    newG = groups.Group(GroupName)
+    newG = groups.Group(group_name)
     mem.addGroup(newG)
     all_groups.append(newG)
 
@@ -81,35 +74,35 @@ async def create_group(interaction: discord.Interaction, GroupName: str):
 This command adds a user to an existing group,
 checking for both the group's existence and the user's initialization.
 
-@param GroupName The Name of the Group
-@param newUser The Name of the new user
+@param group_name The Name of the Group
+@param new_member The Name of the new user
 """
-@client.tree.command(name="add_member_group", description="Adding Usersnames of people in a group")
-async def add_member_group(interaction: discord.Interaction, GroupName: str, newUser: str):
+@client.tree.command(name="add_member_to_group", description="Adding Usersnames of people in a group")
+async def add_member_to_group(interaction: discord.Interaction, group_name: str, new_member: str):
 
     group = None
     for existing_group in all_groups:  # Replace with your list of groups
-        if existing_group.name == GroupName:
+        if existing_group.name == group_name:
             group = existing_group
             break
 
     if group is None:
-        await interaction.response.send_message(f'Group "{GroupName}" not found.')
+        await interaction.response.send_message(f'Group "{group_name}" not found.')
         return
 
     mem = None
     for people in all_users:
-        if people.name == newUser:
+        if people.name == new_member:
             mem = people
             break
 
     if mem is None:
-        await interaction.response.send_message(f'"{newUser}" not initialized')
+        await interaction.response.send_message(f'"{new_member}" not initialized')
         return
 
     mem.addGroup(group)
 
-    await interaction.response.send_message(f'"{newUser}" hase been added to "{GroupName}"')
+    await interaction.response.send_message(f'"{new_member}" hase been added to "{group_name}"')
 
 """
 This command adds a user to This command returns a list of groups that the user is a part of, checking if the user is initialized first.
@@ -164,8 +157,8 @@ async def my_schedule(interaction: discord.Interaction):
 
 """
 This command allows the user to add an event to an existing group, ensuring that the group exists.
-@param GroupName The Name of the Group
-@param EventName The Name of the new event
+@param group_name The Name of the Group
+@param event_name The Name of the new event
 @param year The Year of the new event
 @param month The Month of the new event
 @param day The Day of the new event
@@ -173,19 +166,19 @@ This command allows the user to add an event to an existing group, ensuring that
 @param start_minute The Starting Minute of the new event
 @param duration_minutes The Duration of the new event
 """
-@client.tree.command(name="add_group_event", description="add event to group you are a part of")
-async def add_group_event(interaction: discord.Interaction, GroupName: str, EventName: str, year: int, month: int, day: int, start_hour: int, start_minute: int, duration_minutes: int):
+@client.tree.command(name="new_group_event", description="add event to group you are a part of")
+async def new_group_event(interaction: discord.Interaction, group_name: str, event_name: str, year: int, month: int, day: int, start_hour: int, start_minute: int, duration_minutes: int):
     group = None
     for existing_group in all_groups:  # Replace with your list of groups
-        if existing_group.name == GroupName:
+        if existing_group.name == group_name:
             group = existing_group
             break
 
     if group is None:
-        await interaction.response.send_message(f'Group "{GroupName}" not found.')
+        await interaction.response.send_message(f'Group "{group_name}" not found.')
         return
 
-    new_event = events.Event(EventName, group)
+    new_event = events.Event(event_name, group)
     new_event.createEvent(year, month, day, start_hour,
                           start_minute, duration_minutes)
     group.addEvent(new_event)
@@ -194,32 +187,33 @@ async def add_group_event(interaction: discord.Interaction, GroupName: str, Even
 This command allows the user to remove an event from an existing group,
 verifying the group's existence and the event's presence.
 It checks if the user is initialized before creating the group.
-@param GroupName The Name of the Group the event reside in
-@param EventName The Name of the event being deleted
+@param group_name The Name of the Group the event reside in
+@param event_name The Name of the event being deleted
 """
 @client.tree.command(name="remove_group_event", description="remove event to group you are a part of")
-async def remove_group_event(interaction: discord.Interaction, GroupName: str, EventName: str):
+async def remove_group_event(interaction: discord.Interaction, group_name: str, event_name: str):
     group = None
     for existing_group in all_groups:  # Replace with your list of groups
-        if existing_group.name == GroupName:
+        if existing_group.name == group_name:
             group = existing_group
             break
 
     if group is None:
-        await interaction.response.send_message(f'Group "{GroupName}" not found.')
+        await interaction.response.send_message(f'Group "{group_name}" not found.')
         return
 
     event_to_remove = None
     for event in group.events:
-        if event.name == EventName:
+        if event.name == event_name:
             event_to_remove = event
             break
 
     if event_to_remove:
         group.events.remove(event_to_remove)
-        await interaction.response.send_message(f'Event "{EventName}" removed from group "{GroupName}".')
+        await interaction.response.send_message(f'Event "{event_name}" removed from group "{group_name}".')
     else:
-        await interaction.response.send_message(f'Event "{EventName}" not found in group "{GroupName}".')
+        await interaction.response.send_message(f'Event "{event_name}" not found in group "{group_name}".')
+
 
 
 client.run(TOKEN)
