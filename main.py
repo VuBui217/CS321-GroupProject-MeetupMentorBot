@@ -178,10 +178,9 @@ async def new_group_event(interaction: discord.Interaction, group_name: str, eve
         await interaction.response.send_message(f'Group "{group_name}" not found.')
         return
 
-    new_event = events.Event(event_name, group)
-    new_event.createEvent(year, month, day, start_hour,
+   
+    group.addEvent(year, event_name, month, day, start_hour,
                           start_minute, duration_minutes)
-    group.addEvent(new_event)
 
 """
 This command allows the user to remove an event from an existing group,
