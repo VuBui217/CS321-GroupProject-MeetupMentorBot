@@ -224,23 +224,23 @@ async def create_google_calendar_event_url(interaction: discord.Interaction, eve
         await interaction.response.send_message(f"Invalid event selection. Please try again.")
         return    
     gevent = schedule[event_index]
-        
     
+    event_details = {
+        'summary':  gevent.name,
+        'start': {
+            'dateTime': gevent.start_time.strftime('%Y%m%dT%H%M%SZ'),
+            'timeZone': 'America/New_York',
+        },
+        'end': {
+            'dateTime': gevent.end_time.strftime('%Y%m%dT%H%M%SZ'),
+            'timeZone': 'America/New_York',
+        },  
+        'visibility': 'public',
+    }   
+    event = service.events().insert(calendarId='primary', body=event_details).execute()
 
-    # Base URL for Google Calendar event creation
-    base_url = "https://calendar.google.com/calendar/render?action=edit"
 
-    # Encode event details
-    encoded_name = gevent.name.replace(" ", "%20")
-    start_time_param = f"dates={gevent.start_time.strftime('%Y%m%dT%H%M%SZ')}"
-    end_time_param = f"end={gevent.end_time.strftime('%Y%m%dT%H%M%SZ')}"
-
-
-    # Combine URL parts
-    url = f"{base_url}&text={encoded_name}&{start_time_param}&{end_time_param}"
-
-
-    await interaction.response.send_message(f"Click this link to add the event to your Google Calendar: {url}")
+    await interaction.response.send_message(f"Click this link to add the event to your Google Calendar: {event.get('htmlLink')}")
            
 
 
@@ -306,57 +306,89 @@ async def remove_group_event(interaction: discord.Interaction, group_name: str, 
   
   
   
-async def process_selections(selected_date, selected_group):
-    # Save selected buttons to global variables
-    selected_date_button = datetime.strptime(selected_date, "%Y-%m-%d")
+\
     
-    
-    for existing_group in all_groups:  # Replace with your list of groups
-        if existing_group.name == selected_group:
-            selected_group_button = existing_group
-            break
 
         
 class ChooseDateGroupView(View):
     def __init__(self, user_groups):
         super().__init__(timeout=60)
 
+        self.selected_date_list = []
         self.selected_date = None
         self.selected_group = None
 
         current_date = datetime.now()
+        
+        
         for i in range(7):
-            date_id = f"date-{current_date.strftime('%Y-%m-%d')}"
-            button = discord.ui.Button(
-                label=f"{current_date.month}-{current_date.day}",
-                style=discord.ButtonStyle.blurple,
-                custom_id=date_id,
-            )
-            self.add_item(button)
+            self.selected_date_list.append(current_date)
             current_date += timedelta(days=1)
+            
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[0].month}-{self.selected_date_list[0].day}",style=discord.ButtonStyle.blurple, custom_id=str(0), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[1].month}-{self.selected_date_list[1].day}",style=discord.ButtonStyle.blurple, custom_id=str(1), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[2].month}-{self.selected_date_list[2].day}",style=discord.ButtonStyle.blurple, custom_id=str(2), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[3].month}-{self.selected_date_list[3].day}",style=discord.ButtonStyle.blurple, custom_id=str(3), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[4].month}-{self.selected_date_list[4].day}",style=discord.ButtonStyle.blurple, custom_id=str(4), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[5].month}-{self.selected_date_list[5].day}",style=discord.ButtonStyle.blurple, custom_id=str(5), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+        discord.ui.Button(label=f"date-{self.selected_date_list[6].month}-{self.selected_date_list[6].day}",style=discord.ButtonStyle.blurple, custom_id=str(6), )
+        async def blurple_button(self,button:discord.ui.Button,interaction:discord.Interaction):
+            button.style=discord.ButtonStyle.green
+            self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+            await interaction.response.edit_message(content=f"Selections confirmed!",view=self)
+            
+        
 
-        for group in user_groups:
-            button = discord.ui.Button(
-                label=group.name, style=discord.ButtonStyle.green, custom_id=group.id
-            )
-            self.add_item(button)
 
     async def interaction_check(self, interaction: discord.Interaction):
         return interaction.user == interaction.message.author
 
     async def on_button_click(self, interaction: discord.Interaction, button: Button,):
-        if button.custom_id.startswith("date-"):
-            self.selected_date = button.custom_id
-        else:
-            self.selected_group = button.label
+        
+        self.selected_date = self.self.selected_date_list[int(button.custom_id)]
+
 
         # Check if both selections are made
-        if self.selected_date and self.selected_group:
+        if self.selected_date :
             self.stop()
             await interaction.message.edit(content="Selections confirmed!")
             # Process selections here (call another function, etc.)
             # You can access user and user_groups via `self`
-            await process_selections(self.selected_date, self.selected_group)
+            
             
     
 
@@ -369,12 +401,12 @@ class ChooseDateGroupView(View):
     
     """
 @client.tree.command(name="schedule_meeting", description="Schedule a 30-minute meeting")
-async def schedule_meeting(interaction: discord.Interaction,event_name: str):
+async def schedule_meeting(interaction: discord.Interaction,event_name: str,group_name: str, date_month: int,date_day: int, date_year : int,):
     user = interaction.user.name # Get the user who invoked the command
     current_date = datetime.now()
 
-    # Get the user's groups
-    user = None
+    # Get the user's groups.strftime("%Y%m%d%H%M%S").strftime("%Y%m%d%H%M%S")
+    mem = None
     for people in all_users:
         if people.name == user:
             mem = people
@@ -385,23 +417,25 @@ async def schedule_meeting(interaction: discord.Interaction,event_name: str):
         return
     
         
-    user_groups = mem.groups
-    view = ChooseDateGroupView(user, user_groups)
-    await interaction.response.send_message("Select a date and a group for a meeting between 9 and 7 :", view=view)
-
-    # Get the selected date and group
-    selected_date = selected_date_button
-    selected_group = selected_group_button
     
-    selected_date_button = None
-    selected_group_button = None
+    selected_date = datetime(year=date_year,month=date_month,day=date_day)
+    # Get the selected date and group
+
+    group = None
+    for existing_group in all_groups:  # Replace with your list of groups
+        if existing_group.name == group_name:
+            group = existing_group
+            break
+    selected_group = group
+    
+    
 
     # Find a 30-minute interval where all members are free
-
+    free_interval = "Fail"
     if selected_group is not None:
         # Call a function to find a 30-minute interval in the selected group's schedule
-        free_interval = selected_group.find_free_interval(selected_date_button,event_name)
-    interaction.response.send_message(free_interval)
+        free_interval = selected_group.find_free_interval(selected_date,event_name)
+    await interaction.response.send_message(free_interval)
 
 
 

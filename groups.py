@@ -77,8 +77,10 @@ class Group:
 
             if all_members_free:
                 # Call the method to add a new event to the group
-                self.addEvent(self,current_time.year, name, current_time.month, current_time.day, current_time.hour, current_time.min, 30)
-                return "New Event " + name + "starts at " + current_time.strftime("%I:%M %p")  # Return the formatted time
+                tempEvent = events.Event(name, self)
+                tempEvent.createEvent(int(current_time.strftime("%Y")),int(current_time.strftime("%m")), int(current_time.strftime("%d")), int(current_time.strftime("%H")), int(current_time.strftime("%M")), 30)
+                self.events.append(tempEvent)
+                return "New Event " + name + " starts at " + current_time.strftime("%I:%M %p")  # Return the formatted time
 
             current_time += timedelta(minutes=30)
 
